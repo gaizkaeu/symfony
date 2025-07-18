@@ -22,7 +22,19 @@ final class SignalRegistry
         }
     }
 
-    public function register(int $signal, callable $signalHandler): void
+    public function pop(int $signal): bool {
+        if (!isset($this->signalHandlers[$signal])) {
+            return false;
+        }
+
+        $handler = array_pop($this->signalHandlers[$signal]);
+
+        pcntl_signal($signal, $this->handle(...));
+
+        return $handler !== null;
+    }
+
+    public function push(int $signal, callable $signalHandler): void
     {
         if (!isset($this->signalHandlers[$signal])) {
             $previousCallback = pcntl_signal_get_handler($signal);

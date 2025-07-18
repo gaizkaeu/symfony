@@ -1011,7 +1011,7 @@ class Application implements ResetInterface
                 $sttyMode = shell_exec('stty -g');
 
                 foreach ([\SIGINT, \SIGQUIT, \SIGTERM] as $signal) {
-                    $signalRegistry->register($signal, static fn () => shell_exec('stty '.$sttyMode));
+                    $signalRegistry->push($signal, static fn () => shell_exec('stty '.$sttyMode));
                 }
             }
 
@@ -1021,7 +1021,7 @@ class Application implements ResetInterface
                     $signalEvent = new ConsoleSignalEvent($command, $input, $output, $signal);
                     $alarmEvent = \SIGALRM === $signal ? new ConsoleAlarmEvent($command, $input, $output) : null;
 
-                    $signalRegistry->register($signal, function ($signal) use ($signalEvent, $alarmEvent, $command, $commandSignals, $input, $output) {
+                    $signalRegistry->push($signal, function ($signal) use ($signalEvent, $alarmEvent, $command, $commandSignals, $input, $output) {
                         $this->dispatcher->dispatch($signalEvent, ConsoleEvents::SIGNAL);
                         $exitCode = $signalEvent->getExitCode();
 
@@ -1058,7 +1058,7 @@ class Application implements ResetInterface
             }
 
             foreach ($commandSignals as $signal) {
-                $signalRegistry->register($signal, function (int $signal) use ($command): void {
+                $signalRegistry->push($signal, function (int $signal) use ($command): void {
                     if (\SIGALRM === $signal) {
                         $this->scheduleAlarm();
                     }
@@ -1109,6 +1109,11 @@ class Application implements ResetInterface
         if (null !== $e) {
             throw $e;
         }
+
+        foreach ($commandSignals as $signal) {
+            $this->getSignalRegistry()->pop($signal);
+        }
+
 
         return $event->getExitCode();
     }
