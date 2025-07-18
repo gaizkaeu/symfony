@@ -14,6 +14,7 @@ namespace Symfony\Component\Console\SignalRegistry;
 final class SignalRegistry
 {
     private array $signalHandlers = [];
+    private array $previousHandlers = [];
 
     public function __construct()
     {
@@ -22,16 +23,12 @@ final class SignalRegistry
         }
     }
 
-    public function pop(int $signal): bool {
-        if (!isset($this->signalHandlers[$signal])) {
+    public function reset(int $signal): bool {
+        if (!isset($this->previousHandlers[$signal])) {
             return false;
         }
 
-        $handler = array_pop($this->signalHandlers[$signal]);
-
-        pcntl_signal($signal, $this->handle(...));
-
-        return $handler !== null;
+        return pcntl_signal($signal, $this->previousHandlers[$signal]);
     }
 
     public function push(int $signal, callable $signalHandler): void
@@ -41,6 +38,7 @@ final class SignalRegistry
 
             if (\is_callable($previousCallback)) {
                 $this->signalHandlers[$signal][] = $previousCallback;
+                $this->previousHandlers[$signal][] = $previousCallback;
             }
         }
 

@@ -1111,7 +1111,7 @@ class Application implements ResetInterface
         }
 
         foreach ($this->signalsToDispatchEvent as $signal) {
-            $this->getSignalRegistry()->pop($signal);
+            $this->getSignalRegistry()->reset($signal);
         }
 
 
