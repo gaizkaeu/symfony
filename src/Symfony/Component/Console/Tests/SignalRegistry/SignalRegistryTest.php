@@ -35,7 +35,7 @@ class SignalRegistryTest extends TestCase
         $signalRegistry = new SignalRegistry();
 
         $isHandled = false;
-        $signalRegistry->register(\SIGUSR1, function () use (&$isHandled) {
+        $signalRegistry->push(\SIGUSR1, function () use (&$isHandled) {
             $isHandled = true;
         });
 
@@ -49,12 +49,12 @@ class SignalRegistryTest extends TestCase
         $signalRegistry = new SignalRegistry();
 
         $isHandled1 = false;
-        $signalRegistry->register(\SIGUSR1, function () use (&$isHandled1) {
+        $signalRegistry->push(\SIGUSR1, function () use (&$isHandled1) {
             $isHandled1 = true;
         });
 
         $isHandled2 = false;
-        $signalRegistry->register(\SIGUSR1, function () use (&$isHandled2) {
+        $signalRegistry->push(\SIGUSR1, function () use (&$isHandled2) {
             $isHandled2 = true;
         });
 
@@ -71,7 +71,7 @@ class SignalRegistryTest extends TestCase
         $isHandled1 = false;
         $isHandled2 = false;
 
-        $signalRegistry->register(\SIGUSR1, function () use (&$isHandled1) {
+        $signalRegistry->push(\SIGUSR1, function () use (&$isHandled1) {
             $isHandled1 = true;
         });
 
@@ -80,7 +80,7 @@ class SignalRegistryTest extends TestCase
         $this->assertTrue($isHandled1);
         $this->assertFalse($isHandled2);
 
-        $signalRegistry->register(\SIGUSR2, function () use (&$isHandled2) {
+        $signalRegistry->push(\SIGUSR2, function () use (&$isHandled2) {
             $isHandled2 = true;
         });
 
@@ -99,7 +99,7 @@ class SignalRegistryTest extends TestCase
         });
 
         $isHandled2 = false;
-        $signalRegistry->register(\SIGUSR1, function () use (&$isHandled2) {
+        $signalRegistry->push(\SIGUSR1, function () use (&$isHandled2) {
             $isHandled2 = true;
         });
 
@@ -114,14 +114,14 @@ class SignalRegistryTest extends TestCase
         $signalRegistry1 = new SignalRegistry();
 
         $isHandled1 = false;
-        $signalRegistry1->register(\SIGUSR1, function () use (&$isHandled1) {
+        $signalRegistry1->push(\SIGUSR1, function () use (&$isHandled1) {
             $isHandled1 = true;
         });
 
         $signalRegistry2 = new SignalRegistry();
 
         $isHandled2 = false;
-        $signalRegistry2->register(\SIGUSR1, function () use (&$isHandled2) {
+        $signalRegistry2->push(\SIGUSR1, function () use (&$isHandled2) {
             $isHandled2 = true;
         });
 
