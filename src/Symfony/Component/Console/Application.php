@@ -1124,7 +1124,7 @@ class Application implements ResetInterface
             throw $e;
         }
 
-        foreach ($commandSignals as $signal) {
+        foreach ($this->signalsToDispatchEvent as $signal) {
             $this->getSignalRegistry()->pop($signal);
         }
 
